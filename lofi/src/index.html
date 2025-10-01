@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Scanner - Lo-Fi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">PDF Scanner</h1>
+            <div class="header-actions">
+                <button class="icon-btn" id="helpBtn">?</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Scanner View -->
+            <section id="scannerView" class="view active">
+                <div class="scanner-container">
+                    <div id="cameraPreview" class="camera-preview">
+                        <div class="camera-placeholder">
+                            <div class="placeholder-icon">📷</div>
+                            <p>Kamera tidak aktif</p>
+                            <button id="enableCameraBtn" class="btn btn-primary">Aktifkan Kamera</button>
+                        </div>
+                    </div>
+                    
+                    <div class="scanner-controls">
+                        <div class="camera-buttons">
+                            <button id="switchCameraBtn" class="camera-button" disabled>
+                                <div class="button-icon">🔄</div>
+                                <div class="button-label">Ganti Kamera</div>
+                            </button>
+                            
+                            <button id="captureBtn" class="camera-button primary" disabled>
+                                <div class="button-icon">📸</div>
+                                <div class="button-label">Ambil Gambar</div>
+                            </button>
+                            
+                            <button id="fileSelectBtn" class="camera-button">
+                                <div class="button-icon">📁</div>
+                                <div class="button-label">Pilih File</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="captured-section">
+                        <h3 class="section-title">Gambar yang Diambil</h3>
+                        <div id="imagesContainer" class="images-grid">
+                            <div class="empty-state">
+                                <div class="empty-icon">🖼️</div>
+                                <p>Belum ada gambar</p>
+                            </div>
+                        </div>
+                        
+                        <div class="document-actions">
+                            <button id="clearAllBtn" class="btn btn-outline" disabled>
+                                Hapus Semua
+                            </button>
+                            <button id="createPdfBtn" class="btn btn-primary" disabled>
+                                Buat PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Home View -->
+            <section id="homeView" class="view">
+                <div class="home-container">
+                    <div class="welcome-card">
+                        <div class="welcome-icon">📄</div>
+                        <h2 class="welcome-title">PDF Scanner</h2>
+                        <p class="welcome-subtitle">Pindai dokumen dan simpan sebagai PDF</p>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3 class="section-title">Aksi Cepat</h3>
+                        <div class="actions-grid">
+                            <div class="action-card" id="quickScanBtn">
+                                <div class="action-icon">📷</div>
+                                <div class="action-label">Pindai Baru</div>
+                            </div>
+                            <div class="action-card" id="viewHistoryBtn">
+                                <div class="action-icon">📚</div>
+                                <div class="action-label">Riwayat</div>
+                            </div>
+                            <div class="action-card" id="tutorialBtn">
+                                <div class="action-icon">📖</div>
+                                <div class="action-label">Panduan</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-documents">
+                        <h3 class="section-title">Dokumen Terbaru</h3>
+                        <div id="recentDocuments" class="documents-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">📄</div>
+                                <p>Belum ada dokumen</p>
+                                <p class="empty-subtitle">Dokumen yang Anda buat akan muncul di sini</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="settingsView" class="view">
+                <div class="settings-container">
+                    <h3 class="section-title">Pengaturan</h3>
+                    
+                    <div class="settings-group">
+                        <h4 class="settings-subtitle">Scanner</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Kamera Belakang</span>
+                                <span class="setting-desc">Gunakan kamera belakang untuk dokumen</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="rearCameraToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Deteksi Otomatis</span>
+                                <span class="setting-desc">Deteksi tepi dokumen secara otomatis</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoDetectToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h4 class="settings-subtitle">PDF</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Kualitas Tinggi</span>
+                                <span class="setting-desc">Hasilkan PDF dengan kualitas lebih baik</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="highQualityToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Format Halaman A4</span>
+                                <span class="setting-desc">Gunakan ukuran halaman A4 untuk PDF</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="a4FormatToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h4 class="settings-subtitle">Aplikasi</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Versi</span>
+                                <span class="setting-desc">1.0.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item clickable" id="rateAppBtn">
+                            <div class="setting-info">
+                                <span class="setting-label">Beri Rating</span>
+                                <span class="setting-desc">Beri nilai untuk aplikasi ini</span>
+                            </div>
+                            <div class="setting-action">></div>
+                        </div>
+                        
+                        <div class="setting-item clickable" id="helpSettingBtn">
+                            <div class="setting-info">
+                                <span class="setting-label">Bantuan</span>
+                                <span class="setting-desc">Cara menggunakan aplikasi</span>
+                            </div>
+                            <div class="setting-action">></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-view="homeView">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Beranda</div>
+            </div>
+            
+            <div class="nav-item nav-center" id="cameraNavBtn">
+                <div class="nav-center-icon">📷</div>
+            </div>
+            
+            <div class="nav-item" data-view="settingsView">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Pengaturan</div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- PDF Creation Modal -->
+    <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Buat PDF</h3>
+                <button class="modal-close" id="closePdfModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="pdfName" class="form-label">Nama Dokumen</label>
+                    <input type="text" id="pdfName" class="form-input" placeholder="Masukkan nama dokumen" value="Dokumen Saya">
+                </div>
+                <div class="form-group">
+                    <label for="pdfQuality" class="form-label">Kualitas</label>
+                    <select id="pdfQuality" class="form-select">
+                        <option value="standard">Standar</option>
+                        <option value="high" selected>Tinggi</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button id="cancelPdfBtn" class="btn btn-outline">Batal</button>
+                    <button id="generatePdfBtn" class="btn btn-primary">Buat PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Input (Hidden) -->
+    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
