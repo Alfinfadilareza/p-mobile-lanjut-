@@ -4,13 +4,11 @@
 # 📄 Product Requirements Document (PRD): ScanApp MVP
 
 **Status**: Draft v1.0
-**Penulis**: \[Nama Anda]
-**Tanggal**: 27 Oktober 2023
-**Stakeholder**: Tim Produk, Tim Engineering
-**Target Rilis**: Akhir Q4 2023
+**Penulis**: Muhammad saiful anam, Alfin fadila reza
+**Nim**: 221240001287, 221240001292
 
 ---
-
+                          
 ## 1. Latar Belakang & Visi Produk
 
 ### 1.1. Masalah yang Ingin Diselesaikan (Problem Statement)
