@@ -1,253 +1,372 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Scanner - Lo-Fi</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Scanner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
-<body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <h1 class="app-title">PDF Scanner</h1>
-            <div class="header-actions">
-                <button class="icon-btn" id="helpBtn">?</button>
-            </div>
-        </header>
+<body class="bg-gray-100 min-h-screen">
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Scanner View -->
-            <section id="scannerView" class="view active">
-                <div class="scanner-container">
-                    <div id="cameraPreview" class="camera-preview">
-                        <div class="camera-placeholder">
-                            <div class="placeholder-icon">📷</div>
-                            <p>Kamera tidak aktif</p>
-                            <button id="enableCameraBtn" class="btn btn-primary">Aktifkan Kamera</button>
-                        </div>
-                    </div>
-                    
-                    <div class="scanner-controls">
-                        <div class="camera-buttons">
-                            <button id="switchCameraBtn" class="camera-button" disabled>
-                                <div class="button-icon">🔄</div>
-                                <div class="button-label">Ganti Kamera</div>
-                            </button>
-                            
-                            <button id="captureBtn" class="camera-button primary" disabled>
-                                <div class="button-icon">📸</div>
-                                <div class="button-label">Ambil Gambar</div>
-                            </button>
-                            
-                            <button id="fileSelectBtn" class="camera-button">
-                                <div class="button-icon">📁</div>
-                                <div class="button-label">Pilih File</div>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="captured-section">
-                        <h3 class="section-title">Gambar yang Diambil</h3>
-                        <div id="imagesContainer" class="images-grid">
-                            <div class="empty-state">
-                                <div class="empty-icon">🖼️</div>
-                                <p>Belum ada gambar</p>
-                            </div>
-                        </div>
-                        
-                        <div class="document-actions">
-                            <button id="clearAllBtn" class="btn btn-outline" disabled>
-                                Hapus Semua
-                            </button>
-                            <button id="createPdfBtn" class="btn btn-primary" disabled>
-                                Buat PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Home View -->
-            <section id="homeView" class="view">
-                <div class="home-container">
-                    <div class="welcome-card">
-                        <div class="welcome-icon">📄</div>
-                        <h2 class="welcome-title">PDF Scanner</h2>
-                        <p class="welcome-subtitle">Pindai dokumen dan simpan sebagai PDF</p>
-                    </div>
-                    
-                    <div class="quick-actions">
-                        <h3 class="section-title">Aksi Cepat</h3>
-                        <div class="actions-grid">
-                            <div class="action-card" id="quickScanBtn">
-                                <div class="action-icon">📷</div>
-                                <div class="action-label">Pindai Baru</div>
-                            </div>
-                            <div class="action-card" id="viewHistoryBtn">
-                                <div class="action-icon">📚</div>
-                                <div class="action-label">Riwayat</div>
-                            </div>
-                            <div class="action-card" id="tutorialBtn">
-                                <div class="action-icon">📖</div>
-                                <div class="action-label">Panduan</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="recent-documents">
-                        <h3 class="section-title">Dokumen Terbaru</h3>
-                        <div id="recentDocuments" class="documents-list">
-                            <div class="empty-state">
-                                <div class="empty-icon">📄</div>
-                                <p>Belum ada dokumen</p>
-                                <p class="empty-subtitle">Dokumen yang Anda buat akan muncul di sini</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Settings View -->
-            <section id="settingsView" class="view">
-                <div class="settings-container">
-                    <h3 class="section-title">Pengaturan</h3>
-                    
-                    <div class="settings-group">
-                        <h4 class="settings-subtitle">Scanner</h4>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-label">Kamera Belakang</span>
-                                <span class="setting-desc">Gunakan kamera belakang untuk dokumen</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="rearCameraToggle">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-label">Deteksi Otomatis</span>
-                                <span class="setting-desc">Deteksi tepi dokumen secara otomatis</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="autoDetectToggle" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h4 class="settings-subtitle">PDF</h4>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-label">Kualitas Tinggi</span>
-                                <span class="setting-desc">Hasilkan PDF dengan kualitas lebih baik</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="highQualityToggle" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-label">Format Halaman A4</span>
-                                <span class="setting-desc">Gunakan ukuran halaman A4 untuk PDF</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="a4FormatToggle" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h4 class="settings-subtitle">Aplikasi</h4>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-label">Versi</span>
-                                <span class="setting-desc">1.0.0</span>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item clickable" id="rateAppBtn">
-                            <div class="setting-info">
-                                <span class="setting-label">Beri Rating</span>
-                                <span class="setting-desc">Beri nilai untuk aplikasi ini</span>
-                            </div>
-                            <div class="setting-action">></div>
-                        </div>
-                        
-                        <div class="setting-item clickable" id="helpSettingBtn">
-                            <div class="setting-info">
-                                <span class="setting-label">Bantuan</span>
-                                <span class="setting-desc">Cara menggunakan aplikasi</span>
-                            </div>
-                            <div class="setting-action">></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Bottom Navigation Bar -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" data-view="homeView">
-                <div class="nav-icon">🏠</div>
-                <div class="nav-label">Beranda</div>
-            </div>
-            
-            <div class="nav-item nav-center" id="cameraNavBtn">
-                <div class="nav-center-icon">📷</div>
-            </div>
-            
-            <div class="nav-item" data-view="settingsView">
-                <div class="nav-icon">⚙️</div>
-                <div class="nav-label">Pengaturan</div>
-            </div>
-        </nav>
+  <main class="mx-auto max-w-xl min-h-screen px-2 pb-24">
+    <!-- =============== BERANDA =============== -->
+<section id="homeView" class="view hidden py-5">
+    <div class="welcome-card bg-white rounded-2xl shadow-xl p-8 text-center mb-6">
+      <div class="flex flex-col items-center gap-2 mb-2">
+        <span class="inline-flex w-14 h-14 rounded-xl bg-indigo-100 items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#4338CA" class="w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M9 17v-4a2 2 0 112 0v4" /></svg>
+        </span>
+        <h2 class="text-2xl font-bold text-gray-800 mb-1">PDF Scanner</h2>
+        <p class="text-gray-500 text-md">Pindai dokumen dan simpan sebagai PDF</p>
+      </div>
     </div>
-
-    <!-- PDF Creation Modal -->
-    <div id="pdfModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Buat PDF</h3>
-                <button class="modal-close" id="closePdfModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="pdfName" class="form-label">Nama Dokumen</label>
-                    <input type="text" id="pdfName" class="form-input" placeholder="Masukkan nama dokumen" value="Dokumen Saya">
-                </div>
-                <div class="form-group">
-                    <label for="pdfQuality" class="form-label">Kualitas</label>
-                    <select id="pdfQuality" class="form-select">
-                        <option value="standard">Standar</option>
-                        <option value="high" selected>Tinggi</option>
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button id="cancelPdfBtn" class="btn btn-outline">Batal</button>
-                    <button id="generatePdfBtn" class="btn btn-primary">Buat PDF</button>
-                </div>
-            </div>
+    <div class="quick-actions bg-white rounded-xl shadow mb-6 px-5 py-4">
+      <h3 class="text-lg font-semibold mb-3">Aksi Cepat</h3>
+      <div class="grid grid-cols-3 gap-4">
+        <button class="action-card flex flex-col items-center justify-center gap-2 p-3 bg-gray-50 rounded-xl shadow hover:bg-gray-200 group transition" id="quickScanBtn">
+          <span class="inline-flex items-center justify-center rounded-full h-11 w-11 bg-gradient-to-b from-indigo-100 to-white">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6366F1" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h2l2-3h10l2 3h2a2 2 0 012 2v9a2 2 0 01-2 2H3a2 2 0 01-2-2V9a2 2 0 012-2z" /></svg>
+          </span>
+          <span class="text-xs font-medium text-gray-900">Pindai Baru</span>
+        </button>
+        <button class="action-card flex flex-col items-center justify-center gap-2 p-3 bg-gray-50 rounded-xl shadow hover:bg-gray-200 group transition" id="viewHistoryBtn">
+          <span class="inline-flex items-center justify-center rounded-full h-11 w-11 bg-yellow-100">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#D97706" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-4a2 2 0 112 0v4" /></svg>
+          </span>
+          <span class="text-xs font-medium text-gray-900">Riwayat</span>
+        </button>
+        <button class="action-card flex flex-col items-center justify-center gap-2 p-3 bg-gray-50 rounded-xl shadow hover:bg-gray-200 group transition" id="tutorialBtn">
+          <span class="inline-flex items-center justify-center rounded-full h-11 w-11 bg-purple-100">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#8B5CF6" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M4 9V7a2 2 0 012-2h12a2 2 0 012 2v2" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v4" /></svg>
+          </span>
+          <span class="text-xs font-medium text-gray-900">Panduan</span>
+        </button>
+      </div>
+    </div>
+    <div class="recent-documents bg-white rounded-xl shadow px-5 py-4">
+      <h3 class="text-lg font-semibold mb-3">Dokumen Terbaru</h3>
+      <div id="recentDocuments" class="documents-list">
+        <!-- Kosong (bisa diisi dengan JS) -->
+        <div class="text-center text-gray-400 py-11">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#646464" class="mx-auto w-10 h-10 mb-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-4a2 2 0 112 0v4" /></svg>
+          <p class="mb-1">Belum ada dokumen</p>
+          <p class="text-xs text-gray-400">Dokumen yang Anda buat akan muncul di sini</p>
         </div>
+      </div>
     </div>
+  </section>
 
-    <!-- File Input (Hidden) -->
-    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    <!-- =============== PENGATURAN =============== -->
+    <section id="settingsView" class="view hidden py-5">
+        <div class="bg-white rounded-2xl shadow-xl px-5 pt-7 pb-4">
+          <h3 class="text-xl font-bold mb-3">Pengaturan</h3>
+          <div class="mb-4">
+            <h4 class="font-semibold text-lg mb-2">Scanner</h4>
+            <div class="flex justify-between items-center py-2 border-b">
+              <div>
+                <div class="font-medium text-sm">Kamera Belakang</div>
+                <div class="text-xs text-gray-400">Gunakan kamera belakang untuk dokumen</div>
+              </div>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="rearCameraToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-all after:content-[''] after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow-sm after:transform after:transition-all peer-checked:after:translate-x-5"></div>
+              </label>
+            </div>
+            <!-- Check lainnya hide for brevity, buat sama seperti ini -->
+          </div>
+          <div class="mt-4">
+            <h4 class="font-semibold text-lg mb-2">PDF</h4>
+            <div class="flex justify-between items-center py-2 border-b">
+              <div>
+                <div class="font-medium text-sm">Kualitas Tinggi</div>
+                <div class="text-xs text-gray-400">Hasilkan PDF dengan kualitas lebih baik</div>
+              </div>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="highQualityToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-all after:content-[''] after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow-sm after:transform after:transition-all peer-checked:after:translate-x-5"></div>
+              </label>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <div>
+                <div class="font-medium text-sm">Format Halaman A4</div>
+                <div class="text-xs text-gray-400">Gunakan ukuran halaman A4 untuk PDF</div>
+              </div>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="a4FormatToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-all after:content-[''] after:absolute after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow-sm after:transform after:transition-all peer-checked:after:translate-x-5"></div>
+              </label>
+            </div>
+          </div>
+          <div class="mt-4">
+            <h4 class="font-semibold text-lg mb-2">Aplikasi</h4>
+            <div class="flex justify-between items-center py-2">
+              <div>
+                <div class="font-medium text-sm">Versi</div>
+                <div class="text-xs text-gray-400">1.0.0</div>
+              </div>
+            </div>
+            <div class="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50" id="rateAppBtn">
+              <div>
+                <div class="font-medium text-sm text-indigo-700">Beri Rating</div>
+                <div class="text-xs text-gray-400">Beri nilai untuk aplikasi ini</div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </div>
+            <div class="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50" id="helpSettingBtn">
+              <div>
+                <div class="font-medium text-sm text-indigo-700">Bantuan</div>
+                <div class="text-xs text-gray-400">Cara menggunakan aplikasi</div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
+    <!-- =============== HALAMAN KAMERA (fullscreen tanpa bottom bar) =============== -->
+    <section
+    id="scannerView"
+    class="view hidden fixed inset-0 bg-gray-50 z-50 flex flex-col items-center justify-between"
+  >
+    <!-- Tombol kembali -->
+    <button
+      id="backBtn"
+      class="absolute top-5 left-5 bg-white text-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-100 transition flex items-center gap-1"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  
+    <!-- Preview Kamera -->
+    <div class="w-full max-w-md mx-auto mt-16">
+      <div
+        id="cameraPreview"
+        class="w-full h-72 bg-gray-100 rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner border border-gray-200"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 9.75L12 4l9 5.75V18a2 2 0 01-2 2H5a2 2 0 01-2-2V9.75z" />
+        </svg>
+        <p class="text-gray-400 text-sm">Kamera tidak aktif</p>
+        <button
+          id="enableCameraBtn"
+          class="mt-3 bg-indigo-600 text-white px-5 py-2 rounded-lg shadow hover:bg-indigo-700 transition"
+        >
+          Aktifkan Kamera
+        </button>
+      </div>
+    </div>
+  
+    <!-- Tombol Aksi Kamera -->
+    <div class="w-full max-w-md bg-white p-4 rounded-t-3xl shadow-lg mt-8">
+      <div class="flex justify-between gap-3">
+        <!-- Tombol Ganti Kamera -->
+        <button
+          id="switchCameraBtn"
+          class="flex-1 bg-gray-100 py-3 rounded-xl text-gray-700 font-medium shadow-sm hover:bg-gray-200 transition flex items-center justify-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 4v5h.582A9 9 0 0112 4a9 9 0 017.418 5H20V4m0 16v-5h-.582A9 9 0 0112 20a9 9 0 01-7.418-5H4v5" />
+          </svg>
+          <span>Ganti</span>
+        </button>
+  
+        <!-- Tombol Ambil Gambar -->
+        <button
+          id="captureBtn"
+          class="flex-1 bg-indigo-600 py-3 rounded-xl text-white font-medium shadow-sm hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 5a7 7 0 110 14a7 7 0 010-14zm0 0l.01 0M12 3v2m0 14v2m9-9h-2M5 12H3" />
+          </svg>
+          <span>Ambil</span>
+        </button>
+  
+        <!-- Tombol Pilih File -->
+        <button
+          id="fileSelectBtn"
+          class="flex-1 bg-gray-100 py-3 rounded-xl text-gray-700 font-medium shadow-sm hover:bg-gray-200 transition flex items-center justify-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 7l9-4l9 4v13a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7l9 5 9-5" />
+          </svg>
+          <span>Pilih</span>
+        </button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- HALAMAN PREVIEW HASIL FOTO -->
+<section
+id="previewView"
+class="view hidden fixed inset-0 bg-gray-50 z-50 flex flex-col items-center justify-between"
+>
+<!-- Tombol kembali -->
+<button
+  id="backToCameraBtn"
+  class="absolute top-5 left-5 bg-white text-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-100 transition flex items-center gap-1"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+    viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+  </svg>
+</button>
+  <!-- Tombol Simpan (pojok kanan atas) -->
+  <button
+    id="saveImageBtn"
+    class="absolute top-5 right-5 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 transition"
+    title="Simpan Gambar"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  </button>
+<!-- Preview Gambar -->
+<div class="w-full max-w-md mx-auto mt-16">
+  <img
+    id="previewImage"
+    src=""
+    alt="Hasil Foto"
+    class="w-full h-72 object-cover rounded-2xl border border-gray-300 shadow"
+  />
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+<!-- Pilihan Filter -->
+<div class="w-full max-w-md bg-white p-4 rounded-t-3xl shadow-lg mt-8">
+    <div class="flex justify-around mb-4">
+      <button class="filter-btn text-gray-700 font-medium" data-filter="none">Normal</button>
+      <button class="filter-btn text-gray-700 font-medium" data-filter="grayscale(1)">Grayscale</button>
+      <button class="filter-btn text-gray-700 font-medium" data-filter="sepia(1)">Sepia</button>
+      <button class="filter-btn text-gray-700 font-medium" data-filter="contrast(1.5)">Kontras</button>
+      <button class="filter-btn text-gray-700 font-medium" data-filter="brightness(1.2)">Cerah</button>
+    </div>
+  
+    <div class="flex justify-between gap-3">
+      <!-- Tombol Miringkan -->
+      <button id="rotateImageBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-xl text-gray-800 font-medium shadow-sm flex items-center justify-center gap-2 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582A9 9 0 0112 4a9 9 0 017.418 5H20V4m0 16v-5h-.582A9 9 0 0112 20a9 9 0 01-7.418-5H4v5" />
+        </svg>
+        <span>Miringkan</span>
+      </button>
+  
+      <!-- Tombol Potong -->
+      <button id="cropImageBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-xl text-gray-800 font-medium shadow-sm flex items-center justify-center gap-2 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h12M4 6v12m14 2H6a2 2 0 01-2-2V6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2z" />
+        </svg>
+        <span>Potong</span>
+      </button>
+  
+      <!-- Tombol Tambah Gambar (kanan & berwarna biru) -->
+      <button id="addImageBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2 rounded-xl text-white font-medium shadow-md flex items-center justify-center gap-2 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Tambah</span>
+      </button>
+    </div>
+  </div>
+  
+</section>
+
+<div
+  id="resultView"
+  class="view hidden flex flex-col items-center justify-between h-full p-4 relative"
+>
+  <!-- Tombol kembali -->
+  <button
+    id="backToPreviewBtn"
+    class="absolute top-4 left-4 bg-gray-700 text-white px-3 py-2 rounded-full shadow hover:bg-gray-800 transition"
+  >
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+
+  <!-- Judul -->
+  <h2 class="text-xl font-semibold mt-12 mb-3 text-gray-800">Hasil Gambar</h2>
+
+  <!-- Gambar hasil -->
+  <div
+    class="w-full max-w-md bg-gray-100 p-4 rounded-2xl shadow-lg flex justify-center items-center"
+  >
+    <img
+      id="finalImage"
+      alt="Hasil edit"
+      class="w-full h-auto rounded-xl object-contain"
+    />
+  </div>
+
+  <!-- Tombol bawah -->
+  <div
+    class="fixed bottom-4 left-0 right-0 flex justify-center gap-4 px-4 z-10"
+  >
+    <button
+      id="downloadBtn"
+      class="flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition"
+    >
+      <i class="fa-solid fa-file-pdf"></i>
+      <span>Download PDF</span>
+    </button>
+
+    <button
+      id="shareBtn"
+      class="flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-green-700 transition"
+    >
+      <i class="fa-solid fa-share-nodes"></i>
+      <span>Bagikan</span>
+    </button>
+  </div>
+</div>
+
+
+
+  </main>
+
+  <!-- =============== BOTTOM BAR =============== -->
+  <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 w-full bg-white border-t shadow z-40 flex max-w-xl mx-auto h-16">
+    <button class="flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-indigo-700 transition" data-view="homeView">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 4l9 5.75V18a2 2 0 01-2 2H5a2 2 0 01-2-2V9.75z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 22V12h6v10" />
+      </svg>
+      <span class="text-xs">Beranda</span>
+    </button>
+
+    <button id="cameraNavBtn" class="flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-indigo-700 transition" data-view="scannerView">
+      <span class="flex items-center justify-center bg-indigo-500 text-white w-12 h-12 rounded-full shadow -mt-6 mb-0">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="12" cy="12" r="4" fill="currentColor"/>
+        </svg>
+      </span>
+    </button>
+
+    <button class="flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-indigo-700 transition" data-view="settingsView">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 5.75v.75h4.5v-.75a1 1 0 00-1-1h-2.5a1 1 0 00-1 1zM19.5 14.25A2.25 2.25 0 0121.75 12V8.25A2.25 2.25 0 0019.5 6H4.5a2.25 2.25 0 00-2.25 2.25V12c0 .77.441 1.443 1.15 1.763m-.4 3.591A2.25 2.25 0 004.5 21h15a2.25 2.25 0 002.25-2.25v-2.246c0-.828-.671-1.504-1.5-1.5z" />
+      </svg>
+      <span class="text-xs">Pengaturan</span>
+    </button>
+  </nav>
+
+  <script src="script.js"></script>
 </body>
 </html>
